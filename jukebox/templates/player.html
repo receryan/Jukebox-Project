@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Jukebox: A music queue thing</title>
+	<link rel="stylesheet" href="../static/style.css">
+	<link rel="apple-touch-icon" sizes="180x180" href="../static/images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="../static/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="../static/images/favicon-16x16.png">
+	<link rel="manifest" href="../static/images/site.webmanifest">
+</head>
+
+<body id="body_main">
+	<div class="main">
+
+		<!-- Start user sidebar -->
+		<div class="sidebar">
+			<div>
+				<img class="jukelogo" alt="Jukebox logo" src="../static/images/jukelogo.svg">
+			</div>
+			<ul class="sidebutton">
+				<li class="buttonlabel">
+					<span class="oneline" id="createsession">{{ session_id }}</span>
+					<span class="oneline" style="display:none;" id="currentuser">{{ current_user.id }}</span>
+				</li>
+				<li class="buttonlabel">
+					<a class="linktext" href="{{ url_for('leave_session', session_id=session_id) }}">
+						<span class="oneline" id="leavesession">Leave session</span>
+					</a>
+				</li>
+			</ul>
+			<hr class="sidedivider">
+			<h3 class="header">Users</h3>
+			<!-- Need to dynamically update this-->
+			<div id="userlist-div">
+				<ul class="userlist">
+					{% for user in users %}
+					<li class="users">
+						<span class="usertext" id="user1">{{ user.username }}</span>
+						{% if session_obj.host_user == user.id %}
+						<span class="crown">👑&#xFE0E;</span>
+						{% endif %}
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+		<!-- Start queue panel elements -->
+		<div class="queuepanel">
+			<h1 class="queuebanner">Your Queue</h1>
+			<ul class="queue">
+				<li class="songs queuegrid">
+					<span class="queueinfo queuelength">#</span>
+					<span class="queueinfo">Title</span>
+					<span class="queueinfo queuealbum">Album</span>
+					<span class="queueinfo">Queued by</span>
+					<span class="queueinfo queuelength">🕓&#xFE0E;</span>
+				</li>
+				<hr class="queuedivider">
+				<div id="queuelist-div">
+					{% for song in queue %}
+					<li class="songs queuegrid" id="song1">
+						<span class="queuenumber">{{ song.id }}</span>
+						<ul class="titleartist">
+							<img class="queueimage" src="{{ song.album_image_url }}" alt="../static/images/jukeplaceholder.svg">
+							<span class="queuetitle">{{ song.title }}</span>
+							<span class="queueartist">{{ song.artist }}</span>
+						</ul>
+						<span class="queuealbum">{{ song.album }}</span>
+						<span class="queuedby">{{ song.queued_by }}</span>
+						<span class="queuelength">{{ song.length }}</span>
+					</li>
+					{% endfor %}
+				</div>
+			</ul>
+		</div>
+		<!-- Start search panel elements -->
+		<div class="searchpanel">
+			<li class="contentheader">
+				<form method="POST" id="searchform">
+					<span><input class="search" id="searchfield" name="searchfield" required type="text"
+							placeholder="Search Spotify"></span>
+					<span><input class="searchbutton" id="searchsubmit" name="searchsubmit" type="submit"></span>
+				</form>
+			</li>
+			<div id="search-div">
+				<ul class="results">
+					<li class="songs searchgrid">
+						<span class="searchinfo">Title</span>
+						<span class="searchinfo searchalbum">Album</span>
+						<span class="searchinfo queuelength">🕓&#xFE0E;</span>
+					</li>
+					<hr class="searchdivider">
+				</ul>
+			</div>
+		</div>
+
+		<!-- Start bottom bar elements -->
+		<div class="bottombar">
+			<ul class="nowplaying">
+				<li class="songsnp" id="current-info">
+					<span class="nptitle">Search for a song in the upper right!</span>
+				</li>
+				<li class="controls">
+					<a class="linktext" href="#">
+						<span class="forceskip" id="forceskip">Forceskip</span>
+					</a>
+				</li>
+				<li class="vetocounter">
+					<span class="vetototal" id="vetototal">Veto Count: </span>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script>
+		let session_name = document.getElementById("createsession").innerHTML.toString();
+		let user = document.getElementById("currentuser").innerHTML.toString();
+		const vetoButton = document.querySelector('.queuenumber');
+
+		$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}; //This is not an error
+		$(function () {
+			window.setInterval(function () {
+				loadUserList();
+				loadQueueList();
+			}, 3000)
+
+			function loadUserList() {
+				$.ajax({
+					url: $SCRIPT_ROOT + "/player/" + session_name + "/update-userlist",
+					type: "POST",
+					dataType: "json",
+					success: function (data) {
+						$("#userlist-div").replaceWith(data[1]);
+					}
+				});
+			}; //end loadUserList
+
+			function loadQueueList() {
+				$.ajax({
+				url: $SCRIPT_ROOT + "/player/" + session_name + "/update-queuelist",
+				type: "POST",
+				dataType: "json",
+				success: function (data) {
+					$("#queuelist-div").replaceWith(data[1]);
+				}
+				});
+			}; //end loadQueueList
+
+
+		}); //end function
+
+		function searchSong() {
+			$("#searchform").on("submit", function (event) {
+				$.ajax({
+					url: $SCRIPT_ROOT + "/player/" + session_name + "/search-song",
+					type: "POST",
+					data: {
+						songQuery: $("#searchfield").val(),
+						sentUser: user
+					}
+				})
+					.done(function (data) {
+						$("#search-div").replaceWith(data[1]);
+					}); //end done
+				event.preventDefault();
+			}); //end on
+		};
+
+		function songSelected() {
+			$(".searchelement").on("click", function (event) {
+				$.ajax({
+					url: $SCRIPT_ROOT + "/player/" + session_name + "/add-song",
+					type: "POST",
+					context: this,
+					data: {
+						songID: $(this).attr("id"),
+						songTitle: $(this).attr("title"),
+						songArtist: $(this).attr("artist"),
+						songPlayback: $(this).attr("playback_uri"),
+						sentUser: user
+					},
+				})
+					.done(function (data) {
+						$("#queuelist-div").replaceWith(data[1])
+						$("#current-info").replaceWith(data[2]);
+						//loadQueueList();
+					}); //end done
+					
+				event.stopImmediatePropagation();
+				event.preventDefault();
+			}); //end on
+		}; //end songSelected()
+
+		
+		$(document).ready(function () {
+			searchSong();
+		}
+		); //end ready
+	</script>
+</body>
+
+</html>

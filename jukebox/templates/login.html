@@ -1,0 +1,29 @@
+{%extends "base_home.html" %}
+{% block content %}
+
+<div class="registerpage">
+    <form method="POST" class="form-register">
+        {{ form.hidden_tag() }}
+
+        {{ form.username.label() }}
+        <br>
+        {{ form.username(class="form-control", placeholder="") }}
+        <br>
+        {{ form.password.label() }}
+        <br>
+        {{ form.password(class="form-control", placeholder="") }}
+        <br>
+        {{ form.submit(class='confirmbutton') }}
+
+        <div class="registerpage">
+            <h5>Don't have an account?</h5>
+            <li class="homebuttons">
+                <a href="{{ url_for('register_page') }}">
+                    <button class="confirmbutton" type="button">Register</button>
+                </a>
+           </li>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

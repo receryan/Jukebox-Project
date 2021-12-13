@@ -1,0 +1,678 @@
+@charset "utf-8";
+/* CSS Document */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
+
+/* CSS SPECIFICALLY MADE FOR PLAYER.HTML... can use on other pages though */
+
+/* Disables the dot that usually appears on lists */
+ul {list-style: none;}
+li {list-style: none;}
+
+body { /* Basic stuff for every page */
+	background-color: #111111;
+	color: white;
+	font-family: Roboto, Arial, serif;
+	text-transform: none;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	line-height: 1.6;
+	box-sizing: border-box;
+}
+
+.main { /* Panels for the player page */
+	display: grid;
+	grid-template-areas:
+		"side con ser"
+		"bot bot bot";
+	grid-template-columns: 210px 2fr 1fr;
+	grid-template-rows: 1fr auto;
+	height: 100%;
+	min-height: 100%;
+	position: fixed;
+	width: 100%;
+	background: linear-gradient(125deg, #fcd536 0%, #fc8db8 9%, #8dfcf0 18%, #fcd536 27%, #fc8db8 36%, #8dfcf0 45%, #fcd536 54%, #fc8db8 63%, #8dfcf0 72%, #fcd536 81%, #fc8db8 90%, #8dfcf0 100%);
+	background-size: 400% 400%;
+	animation: pwetty 120s linear infinite;
+}
+
+/* SIDEBAR */
+
+.sidebar { /* Basic stuff, like the width and gradient background */
+	width: 210px;
+	grid-area: side;
+	background: linear-gradient(180deg, #36fc5e 0%, rgba(34, 34, 34, 0.75) 20%);
+	overflow-y: auto;
+}
+
+.jukelogo { /* Positioning of the SVG logo */
+	width: 160px;
+	margin: 30px 24px 0 24px;
+}
+
+.header { /* "Users" */
+	font-family: Pacifico, Arial, sans-serif;
+	font-weight: 500;
+	font-size: 24px;
+	margin: 8px 24px -8px 24px;
+}
+
+.sidebutton { /* "Leave session" button */
+	padding-left: 24px;
+	padding-right: 24px;
+	margin: 8px 0px 10px 0px;
+}
+
+.buttonlabel { /* More about the button (I sure make this messy) */
+	align-items: center;
+	display: flex;
+	height: 20px;
+}
+
+.linktext { /* Again, more button related things (also used for now playing bar) */
+	color:#8dfcf0;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 16px;
+	text-decoration: none;
+	transition-duration: .2s;
+}
+
+.linktext:hover { /* Changes color, gets bolder, and underlines on hover */
+	color: #36fce7;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+.sidedivider { /* Line separating session info from userlist */
+	position: relative;
+	background-color: #8dfcf0;
+	border: none;
+	height: 1px;
+	margin: 0 24px 0 24px;
+	min-height: 1px;
+}
+
+.queuedivider { /* Line separating queueinfo to queue list */
+	position: relative;
+	background-color: #fcd536;
+	border: none;
+	height: 1px;
+	margin: 0 0 10px 0;
+	min-height: 1px;
+}
+
+.searchdivider { /* Line separating searchinfo to search results */
+	position: relative;
+	background-color: #36fc5c;
+	border: none;
+	height: 1px;
+	margin: 0 0 10px 0;
+	min-height: 1px;
+}
+
+.userlist { /* list of usernames */
+	border-radius: 4px;
+	margin: 0px;
+}
+
+ul.userlist { /* Padding for the userlist */
+	margin: 8px 8px 8px 8px;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.users { /* Grid for the usernames and the crown/kick icons */
+	display: grid;
+	grid-template-columns: [user] 1fr [kick] 10px;
+	margin: 0 5px 0 0;
+}
+
+.usertext { /* How many classes do users need? */
+	font-size: 14px;
+	font-weight: 400;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+}
+
+.kick .crown { /* Keeps both the crown and kick icon consistent */
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.crown { /* Crown = host of server */
+	color: #fcd536;
+}
+
+.kick { /* Kick the bad eggs out (if you're a host), hidden by default */
+	color:#111111;
+	text-decoration: none;
+	transition-duration: .2s;
+}
+
+.kick:hover { /* Turns red when you hover over it */
+	color: #fc3682;
+}
+
+/* QUEUE */
+
+.queuepanel { /* The queue background */
+	background-color: #222222;
+	grid-area: con;
+	background: linear-gradient(180deg, #fc3682 0%, rgba(34, 34, 34, 0.50) 20%);
+	overflow-y: auto;
+}
+
+.queuebanner { /* "Your Queue" */
+	padding-left: 24px;
+	padding-top: 16px;
+	font-size: 36px;
+	font-family: Pacifico, Arial, sans-serif;
+	font-weight: 500;
+	margin: 0px;
+}
+
+.queue { /* The queue itself */
+	margin: 0px;
+	padding-left: 24px;
+	padding-right: 24px;
+}
+
+.queuegrid { /* 5 columns: queue number, title/artist, album title, who queued it, timelength */
+	grid-template-columns: [num] 20px [title] 6fr [album] 4fr [queuer] 2fr [time] 50px;
+	display: grid;
+	gap: 10px;
+	align-items: center;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
+a.youtubelink { /* YouTube URL instead of album for queued YouTube videos */
+	color: #fc8db8;
+	text-decoration: none;
+	transition-duration: .2s;
+}
+
+a.youtubelink:hover { /* Just making it redder and bolder whatever */
+	color: #fc3682;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+.queueinfo { /* bar explaining what each queue section is for */
+	position: relative;
+	color: #fcd536;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+}
+
+.queuenumber { /* number of item on queue */
+	position: relative;
+	text-align: right;
+	font-family: 'Roboto Mono';
+}
+
+.queuenumber:hover { /* goal: make this a clickable way to votekick or remove a song */
+	font-weight: 300;
+	color: #fc8db8;
+	display: block;
+	opacity: 100;
+	overflow: hidden;
+	transition-duration: .2s;
+	position: relative;
+	text-align: right;
+	font-family: 'Roboto Mono';
+}
+
+.queuenumber:hover span { /* hides the number */
+	display: none;
+}
+
+.queuenumber:hover:before { /* replaces number with an X */
+	content: "⠀X";
+	cursor: pointer;
+}
+
+.titleartist { /* 2x2 grid for title and artist */
+	display: grid;
+	grid-template-areas:
+		"img title"
+		"img artist";
+	grid-template-columns: auto 1fr;
+	grid-template-rows: auto auto;
+	padding: 0px;
+	align-items: center;
+}
+
+.queueimage { /* album cover (or youtube thumbnail) */
+	width: 40px;
+	padding: 0;
+	margin: 0;
+	grid-area: img;
+}
+
+.queuetitle { /* song title */
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+	grid-area: title;
+	padding-left: 10px;
+}
+
+.queueartist { /* name of the artist */
+	font-size: 12px;
+	color: #cfcfcf;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+	grid-area: artist;
+	padding-left: 10px;
+}
+
+.queuealbum { /* name of the album */
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+}
+
+.searchalbum { /* name of the album */
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+}
+
+@media (max-width: 1000px) {
+	.queuealbum {
+		display: none !important;
+	}
+	.queuegrid { /* 5 columns: queue number, title/artist, album title, who queued it, timelength */
+		grid-template-columns: [num] 20px [title] 6fr [queuer] 2fr [time] 50px !important;
+		display: grid;
+		gap: 10px;
+		align-items: center;
+		padding-bottom: 5px;
+		padding-top: 5px;
+	}
+}
+
+@media (max-width: 1100px) {
+	.searchalbum {
+		display: none !important;
+	}
+	.searchgrid { /* 3 colums: title/artist, album, time */
+		grid-template-columns: [title] 6fr [time] 50px !important;
+		display: grid;
+		gap: 10px;
+		align-items: center;
+		padding-bottom: 5px;
+		padding-top: 5px;
+	}
+}
+
+.queuedby { /* who queued the song */
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+}
+
+.queuelength { /* length of song */
+	font-family: 'Roboto Mono';
+	position: relative;
+	text-align: right;
+}
+
+/* SEARCH */
+
+.searchpanel { /* background for search panel */
+	background-color: #222222;
+	grid-area: ser;
+	background: linear-gradient(180deg, #36fce7 0%, rgba(34, 34, 34, 0.75) 20%);
+	overflow-y: auto;
+}
+
+.search { /* search bar */
+	background-color: #fff;
+	color: #000;
+	border: 0;
+	border-radius: 5px;
+	margin-top: 24px;
+	margin-left: 24px;
+	margin-right: 24px;
+	margin-bottom: 5px;
+	width: -webkit-fill-available;
+	width: -moz-available;
+	padding: 10px;
+	font-family: Roboto, Arial, sans-serif;
+}
+
+.search::placeholder { /* font size of the placeholder font */
+	font-size: 12px;
+}
+
+.results { /* search results, basically just another queue list. reuses a lot of queue classes actually */
+	margin: 0px;
+	padding-left: 24px;
+	padding-right: 24px;
+}
+
+.searchbutton {
+	display: none;
+}
+
+.searchgrid { /* 3 colums: title/artist, album, time */
+	grid-template-columns: [title] 6fr [album] 4fr [time] 50px;
+	display: grid;
+	gap: 10px;
+	align-items: center;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
+.searchinfo { /* bar explaining the columns */
+	color: #36fc5c;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+}
+
+/* NOW PLAYING BAR */
+
+.bottombar {
+	background-color: rgba(34, 34, 34, 0.95);
+	width: 100%;
+	grid-area: bot;
+}
+
+.nowplaying { /* 2 columns: what's actually playing and the controls */
+	display: grid;
+	grid-template-columns: [playing] auto [controls] 10vw [vetocounter] 10vw;
+	padding-left: 24px; 
+}
+
+.songsnp { /* 2x2 grid of title artist and album cover */
+	display: grid;
+	grid-template-areas:
+		"npimg nptit"
+		"npimg npart";
+		grid-template-columns: auto 1fr;
+		grid-template-rows: 35px 25px;
+	align-items: center;
+}
+
+.npimagespan { /* uhh */
+	grid-area: npimg;
+}
+
+.npimage { /* adjusting image size */
+	width: 60px;
+	padding: 0;
+	margin: 0;
+}
+
+.nptitle { /* title of song currently playing */
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+	grid-area: nptit;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: 18px;
+}
+
+.npartist { /* artist of song currently playing */
+	font-size: 12px;
+	color: #b9b9b9;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+	grid-area: npart;
+	padding-left: 10px;
+}
+
+/* HOME.HTML */
+
+.wrapper { /* background of homepage */
+	height: 100vh;
+	text-align: center;
+	background: linear-gradient(125deg, #fcd536 0%, #fc8db8 50%, #8dfcf0);
+}
+
+.jukehomelogo { /* scaling the logo SVG */
+	width: 300px;
+	margin: 64px 24px 0 24px;
+}
+
+.homebuttons { /* padding and spacing for buttons */
+	padding: 0px;
+	margin-bottom: 10px;
+	position: relative;
+}
+
+a { /* no underlines by default */
+	text-decoration: none;
+}
+
+.spotifybutton { /* sign in with spotify button */
+	background-color: #36fc5c;
+	color: #000;
+	border: 0;
+	border-radius: 5px;
+	width: 420px;
+	height: 40px;
+	font-family: Roboto, Arial, sans-serif;
+	text-align:center;
+	cursor: pointer;
+	font-weight: bold;
+	/*animation: begging 1s infinite;*/
+}
+
+@keyframes begging { /* animation to stress that logging in with spotify is important */
+	0% {
+		background-color: #36fc5c;
+	}
+	50% {
+		background-color: #83fc9a;
+	}
+	100% {
+		background-color: #36fc5c;
+	}
+}
+
+@keyframes pwetty { /* pretty background */
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.usernamebutton { /* enter username prompt */
+	background-color: #fff;
+	color: #000;
+	border: 0;
+	border-radius: 5px;
+	width: 400px;
+	height: 20px;
+	padding: 10px;
+	font-family: Roboto, Arial, sans-serif;
+	text-align:center;
+}
+
+.sessionID { /* enter session id prompt */
+	background-color: #fff;
+	color: #000;
+	border: 0;
+	border-radius: 5px;
+	width: 300px;
+	height: 20px;
+	padding: 10px;
+	font-family: Roboto, Arial, sans-serif;
+	text-align:center;
+}
+
+.joinbutton { /* join session button */
+	background-color: #36fce7;
+	color: #000;
+	border: 0;
+	border-radius: 5px;
+	width: 96px;
+	height: 40px;
+	font-family: Roboto, Arial, sans-serif;
+	text-align:center;
+	cursor: pointer;
+}
+
+.confirmbutton { /* buttons on the login/register pages */
+	background-color: #36fce7;
+	color: #000;
+	border: 0;
+	border-radius: 5px;
+	width: 96px;
+	height: 40px;
+	font-family: Roboto, Arial, sans-serif;
+	text-align:center;
+	cursor: pointer;
+	display: block;
+	margin: auto;
+}
+
+.createbutton { /* create new session button */
+	background-color: #36fce7;
+	color: #000;
+	border: 0;
+	border-radius: 5px;
+	width: 420px;
+	height: 40px;
+	font-family: Roboto, Arial, sans-serif;
+	text-align:center;
+	cursor: pointer;
+}
+
+.registerpage {
+	width: 500px;
+	margin: auto;
+}
+.form-register {
+	font-weight: 700;
+}
+.form-control {
+	background-color: #fff;
+	color: #000;
+	border: 0;
+	border-radius: 5px;
+	width: 400px;
+	height: 20px;
+	padding: 10px;
+	margin-bottom: 10px;
+	font-family: Roboto, Arial, sans-serif;
+	text-align:center;
+}
+.alert {
+	border: 0;
+	border-radius: 5px;
+	width: 400px;
+	line-height: 1;
+	padding: 10px 10px 10px 10px;
+	margin: auto auto 10px auto;
+}
+
+
+/*Button classes to match different notification types*/
+.alert-danger {
+	background-color: #fc3682;
+	color: white;
+}
+
+.alert-info {
+	background-color: #effc36;
+	color: black;
+}
+
+.alert-success {
+	background-color: #36fc5c;
+	color: black;
+}
+
+.alert-message {
+	background-color: #36fce7;
+	color: black;
+}
+
+.close {
+	border: 0;
+	background-color: #fc368200;
+	transition-duration: .2s;
+}
+
+.close:hover {
+	color: white;
+	background-color: #fc3682;
+}
+
+.vetocounter {
+	text-align: left;
+	color:#8dfcf0;
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.uhoh {
+	font-family: Pacifico, Roboto, serif;
+	font-weight: 300;
+	font-size: 56px;
+	margin: 0;
+}
+
+h5 {
+	margin-bottom: 10px;
+}
+
+.searchelement {
+    background-color: transparent;
+    border: none;
+    color: white;
+    text-align: left;
+	width: -moz-available;
+    width: -webkit-fill-available;
+    font-family: Roboto, Arial, serif;
+	font-size: 16px;
+	cursor: pointer;
+	padding: 0;
+	transition-duration: .2s;
+	border-radius: 5px;
+}
+
+.searchelement:hover {
+	background-color:rgba(34, 34, 34, 0.50);
+	margin-left: -15px;
+	margin-right: -15px;
+	font-weight: 700;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.searchelement:active {
+	background-color:rgba(34, 34, 34, 0.75);
+	font-weight: 500;
+}
